@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.inboxview.app.config.JwtService;
@@ -37,14 +36,11 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
     private static final String jwtToken = "jwt-token";
     private static final String BAD_CREDENTIALS_EXCEPTION = "Invalid credentials.";
-    private static final String NOT_VERIFIED = "User is not verified.";
 
     @InjectMocks
     private AuthenticationService authenticationService;

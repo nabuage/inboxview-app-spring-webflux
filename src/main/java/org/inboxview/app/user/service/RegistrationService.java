@@ -47,13 +47,11 @@ public class RegistrationService {
                     )
                     .flatMap(registeredUser -> {
                         return verificationService.sendEmailVerification(registeredUser)
+                            .filter(success -> success)
+                            .switchIfEmpty(Mono.error(new RuntimeException(EMAIL_VERIFICATION_NOT_SENT)))
                             .map(success -> {
                                 return userMapper.toDto(registeredUser);
                             });
-                    })
-                    .onErrorResume(e -> {
-                        log.error("Error with registration.", e);
-                        return Mono.error(e);
                     });
             
             });

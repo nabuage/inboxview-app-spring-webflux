@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=inboxview_app_db'
+      - 'POSTGRES_PASSWORD=inboxview_app_user'
+      - 'POSTGRES_USER=inboxview_app_user'
+    ports:
+      - '5432'
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - '1025:1025'
+      - '8025:8025'

@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: inboxview-app
+  r2dbc:
+    url: ${IV_DATASOURCE_TYPE}:postgresql://${IV_DATASOURCE_HOST}:${IV_DATASOURCE_PORT}/${IV_DATASOURCE_DATABASE}
+    username: ${IV_DATASOURCE_USERNAME}
+    password: ${IV_DATASOURCE_PASSWORD}
+  mail:
+    host: ${IV_MAIL_HOST}
+    username: ${IV_MAIL_USERNAME}
+    password: ${IV_MAIL_PASSWORD}
+    port: 587
+    properties:
+        "[mail.smtp.socketFactory.class]": javax.net.ssl.SSLSocketFactory
+        "[mail.smtp.socketFactory.fallback]": false
+        "[mail.smtp.socketFactory.port]": 465
+        "[mail.smtp.startssl.enable]": true
+
+springdoc:
+    api-docs:
+        path: /api-docs
+    swagger-ui:
+        path: /swagger-ui.html
+        enabled: true
+
+logging:
+    level: 
+        root: INFO
+        org.springframework.data.repository: DEBUG
+        org.springframework.r2dbc.core: DEBUG
+        io.r2dbc.postgresql.PARAM: DEBUG
+
+app:
+  url: ${IV_URL}
+  from-email: george@inboxview.org
+
+jwt:
+  private-key: classpath:jwt/app.key
+  public-key: classpath:jwt/app.pub
+  access-token-ttl: 15m
+  refresh-token-ttl: 1440m

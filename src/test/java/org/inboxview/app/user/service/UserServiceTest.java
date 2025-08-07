@@ -65,7 +65,7 @@ public class UserServiceTest {
         StepVerifier.create(result)
             .expectNextMatches(userDto -> {
                 assertThat(userDto).isEqualTo(this.userDto);
-                return true;
+                return Boolean.TRUE;
             })
             .verifyComplete();
 

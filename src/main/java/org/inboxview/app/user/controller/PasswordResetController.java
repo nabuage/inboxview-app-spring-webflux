@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,13 +20,23 @@ public class PasswordResetController {
     private final PasswordService passwordService;
 
     @PostMapping("/email-reset")
-    public Mono<Void> emailReset(@RequestBody PasswordResetRequestDto request) {
-        return passwordService.emailResetLink(request.username());
+    public Mono<ResponseEntity<Void>> emailReset(@RequestBody PasswordResetRequestDto request) {
+        return passwordService
+            .emailResetLink(request.username())
+            .then(Mono.just(ResponseEntity.noContent().<Void>build()))
+            .onErrorResume(e -> {
+                return Mono.just(ResponseEntity.internalServerError().build());
+            });
     }
 
     @PostMapping("/reset")
-    public Mono<Void> reset(@RequestBody PasswordResetRequestDto request) {
-        return passwordService.reset(request);
+    public Mono<ResponseEntity<Void>> reset(@RequestBody PasswordResetRequestDto request) {
+        return passwordService
+            .reset(request)
+            .then(Mono.just(ResponseEntity.noContent().<Void>build()))
+            .onErrorResume(e -> {
+                return Mono.just(ResponseEntity.internalServerError().build());
+            });
     }
     
 }

@@ -1,10 +1,7 @@
 package org.inboxview.app.user.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +28,6 @@ import reactor.test.StepVerifier;
 @ExtendWith(MockitoExtension.class)
 public class PasswordServiceTest {
     private static final String URL = "http://localhost:8080";
-    private static final String PASSWORD_NOT_EQUAL_ERROR = "Password and Password Confirmation must be the same.";
     
     @InjectMocks
     PasswordService passwordService;

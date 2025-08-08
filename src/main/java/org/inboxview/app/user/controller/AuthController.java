@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -35,9 +36,13 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public Mono<Void> revokeToken(
+    public Mono<ResponseEntity<Void>> revokeToken(
         @RequestBody RefreshTokenRequestDto request
     ) {
-        return authenticationService.revokeRefreshToken(request.refreshToken());
+        return authenticationService.revokeRefreshToken(request.refreshToken())
+            .then(Mono.just(ResponseEntity.noContent().<Void>build()))
+            .onErrorResume(e -> {
+                return Mono.just(ResponseEntity.internalServerError().build());
+            });
     }
 }

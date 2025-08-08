@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import org.inboxview.app.error.DuplicateException;
 import org.inboxview.app.error.NotFoundException;
 import org.inboxview.app.user.dto.UserDto;
 import org.inboxview.app.user.entity.User;
@@ -39,16 +40,23 @@ public class VerificationService {
 
     // @Async
     public Mono<Boolean> sendEmailVerification(User user) {
-        return generateEmailToken(user.getId())
-            .flatMap(code -> {
-                var email = user.getEmail();
-                var guid = user.getGuid();
+        return userRepository.findById(user.getId())
+            .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
+            .flatMap(u -> {
+                return generateEmailToken(user.getId())
+                    .flatMap(code -> {
+                        var email = user.getEmail();
+                        var guid = user.getGuid();
 
-                return messageSenderService.sendEmail(email, SUBJECT, BODY.formatted(url, guid, code))
-                    .flatMap(sent -> {
-                        return Mono.just(sent);
-                    });
-            });
+                        return messageSenderService.sendEmail(email, SUBJECT, BODY.formatted(url, guid, code))
+                            .flatMap(sent -> {
+                                return Mono.just(sent);
+                            });
+                });
+            })
+            .onErrorResume(e -> {
+                return Mono.just(Boolean.FALSE);
+            });            
     }
 
     private Mono<String> generateEmailToken(Long userId) {
@@ -111,7 +119,7 @@ public class VerificationService {
         return userRepository.findByGuid(userGuid)
             .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
             .filter(user -> user.getDateVerified() == null)
-            .switchIfEmpty(Mono.error(new NotFoundException(USER_ALREADY_VERIFIED)))
+            .switchIfEmpty(Mono.error(new DuplicateException(USER_ALREADY_VERIFIED)))
             .flatMap(user -> {
                 return userVerificationRepository
                     .setDateDeletedByUserId(user.getId(), OffsetDateTime.now())

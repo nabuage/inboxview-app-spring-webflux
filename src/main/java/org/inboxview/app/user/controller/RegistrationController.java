@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/email/resend-verify")
-    public Mono<Void> resendEmailVerify(@RequestBody VerifyResendRequestDto request) {
-        return verificationService.resendEmailVerification(request.id());
+    public Mono<ResponseEntity<Void>> resendEmailVerify(@RequestBody VerifyResendRequestDto request) {
+        return verificationService
+            .resendEmailVerification(request.id())
+            .then(Mono.just(ResponseEntity.noContent().<Void>build()))
+            .onErrorResume(e -> {
+                return Mono.just(ResponseEntity.internalServerError().build());
+            });
     }
 }

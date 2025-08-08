@@ -32,7 +32,6 @@ public class SecurityConfig {
                     "/api-docs/**",
                     "/actuator/**",
                     "/api/auth/**",
-                    "/api/user/**",
                     "/api/registration/**",
                     "/api/password/**"
                 ).permitAll()

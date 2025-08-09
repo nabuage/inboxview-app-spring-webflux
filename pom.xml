@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.inboxview</groupId>
-	<artifactId>inboxview-app</artifactId>
+	<artifactId>inboxview-app-spring-webflux</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inboxview-app</name>
-	<description>Inboxview App</description>
+	<name>inboxview-app-spring-webflux</name>
+	<description>Inboxview App WebFlux</description>
 	<url/>
 	<licenses>
 		<license/>

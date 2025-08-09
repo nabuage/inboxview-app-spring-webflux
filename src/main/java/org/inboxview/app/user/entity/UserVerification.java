@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class UserVerification {
     @Id
     @Column("user_verification_id")
-    private Long verificationId;
+    private Long id;
 
     @Column("user_id")
     private Long userId;

@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class RefreshToken {
     @Id
     @Column("refresh_token_id")
-    private Long refreshTokenId;
+    private Long id;
 
     @Column("refresh_token_guid")
     private String guid;

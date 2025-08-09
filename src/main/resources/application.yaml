@@ -1,6 +1,6 @@
 spring:
   application:
-    name: inboxview-app
+    name: inboxview-app-spring-webflux
   r2dbc:
     url: ${IV_DATASOURCE_TYPE}:postgresql://${IV_DATASOURCE_HOST}:${IV_DATASOURCE_PORT}/${IV_DATASOURCE_DATABASE}
     username: ${IV_DATASOURCE_USERNAME}

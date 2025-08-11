@@ -44,17 +44,17 @@ public class AuthControllerTest extends BaseControllerTest {
     @BeforeEach
     public void setup() {
         request = AuthenticationRequestDto.builder()
-            .username("username")
+            .email("george@inboxview.com")
             .password("password")
             .build();
 
         jsonRequest = """
             {
-                "username": "%s",
+                "email": "%s",
                 "password": "%s"
             }
             """.formatted(
-                request.username(),
+                request.email(),
                 request.password()
             );
 

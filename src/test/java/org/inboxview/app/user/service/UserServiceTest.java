@@ -47,7 +47,6 @@ public class UserServiceTest {
 
         userDto = UserDto.builder()
             .email(user.getEmail())
-            .username(user.getUsername())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
             .phone(user.getPhone())

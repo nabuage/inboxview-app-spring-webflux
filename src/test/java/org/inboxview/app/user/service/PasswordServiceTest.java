@@ -49,7 +49,7 @@ public class PasswordServiceTest {
 
         user = User.builder()
             .id(1L)
-            .username("username")
+            .username("email@inboxview.com")
             .password("password")
             .email("email@inboxview.com")
             .firstName("firstname")
@@ -94,7 +94,7 @@ public class PasswordServiceTest {
             .id("guid")
             .password("password")
             .passwordConfirmation("password")
-            .username("username")
+            .email("email@inboxview.com")
             .token("token")
             .build();
         var userPasswordReset = user = User.builder()
@@ -132,7 +132,7 @@ public class PasswordServiceTest {
             .id("guid")
             .password("password")
             .passwordConfirmation("password")
-            .username("username")
+            .email("email@inboxview.com")
             .token("token")
             .build();
         var userPasswordReset = user = User.builder()
@@ -166,12 +166,12 @@ public class PasswordServiceTest {
             .id("guid")
             .password("password")
             .passwordConfirmation("password")
-            .username("username")
+            .email("email@inboxview.com")
             .token("token")
             .build();
         var userPasswordReset = user = User.builder()
             .id(1L)
-            .username("username")
+            .username("email@inboxview.com")
             .password("password")
             .email("email@inboxview.com")
             .firstName("firstname")
@@ -200,7 +200,7 @@ public class PasswordServiceTest {
             .id("guid")
             .password("password")
             .passwordConfirmation("password")
-            .username("username")
+            .email("email@inboxview.com")
             .token("token")
             .build();
 
@@ -223,7 +223,7 @@ public class PasswordServiceTest {
             .id("guid")
             .password("password")
             .passwordConfirmation("password1")
-            .username("username")
+            .email("email@inboxview.com")
             .token("token")
             .build();
 

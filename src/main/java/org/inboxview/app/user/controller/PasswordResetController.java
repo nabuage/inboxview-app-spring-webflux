@@ -22,7 +22,7 @@ public class PasswordResetController {
     @PostMapping("/email-reset")
     public Mono<ResponseEntity<Void>> emailReset(@RequestBody PasswordResetRequestDto request) {
         return passwordService
-            .emailResetLink(request.username())
+            .emailResetLink(request.email())
             .then(Mono.just(ResponseEntity.noContent().<Void>build()))
             .onErrorResume(e -> {
                 return Mono.just(ResponseEntity.internalServerError().build());

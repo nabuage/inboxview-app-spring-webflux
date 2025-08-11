@@ -11,7 +11,7 @@ public class RegistrationMapper {
         final var user = new User();
 
         user.setEmail(request.email());
-        user.setUsername(request.username());
+        user.setUsername(request.email());
         user.setPassword(request.password());
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
@@ -23,7 +23,6 @@ public class RegistrationMapper {
     public RegistrationResponseDto toRegistrationResponse(final User user, boolean emailVerificationRequired) {
         return new RegistrationResponseDto(
             user.getGuid(),
-            user.getUsername(),
             user.getEmail(),
             user.getFirstName(),
             user.getLastName(),

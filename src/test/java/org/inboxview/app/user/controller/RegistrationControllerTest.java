@@ -52,7 +52,6 @@ public class RegistrationControllerTest extends BaseControllerTest {
     @BeforeEach
     public void setup() {
         user = UserDto.builder()
-            .username("username")
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
@@ -60,14 +59,12 @@ public class RegistrationControllerTest extends BaseControllerTest {
 
         jsonRequest = """
                 {
-                    "username": "%s",
                     "password": "%s",
                     "email": "%s",
                     "firstName": "%s",
                     "lastName": "%s"
                 }
             """.formatted(
-                user.username(),
                 PASSWORD,
                 user.email(),
                 user.firstName(),
@@ -90,7 +87,6 @@ public class RegistrationControllerTest extends BaseControllerTest {
 
         mockMvc.perform(asyncDispatch(result))
             .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(user.username()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(user.email()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(user.firstName()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(user.lastName()))

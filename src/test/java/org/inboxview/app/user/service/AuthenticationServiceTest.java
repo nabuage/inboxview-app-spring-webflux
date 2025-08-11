@@ -69,7 +69,7 @@ public class AuthenticationServiceTest {
 
         user = User.builder()
             .id(1L)
-            .username("username")
+            .username("email@inboxview.com")
             .password("password")
             .email("email@inboxview.com")
             .firstName("firstname")
@@ -78,7 +78,7 @@ public class AuthenticationServiceTest {
             .build();
 
         request = AuthenticationRequestDto.builder()
-            .username("username")
+            .email("email@inboxview.com")
             .password("password")
             .build();
     }
@@ -87,15 +87,15 @@ public class AuthenticationServiceTest {
     public void testAuthenticateReturnsSuccess() {
         String refreshTokenGuid = UUID.randomUUID().toString();
         var authToken = UsernamePasswordAuthenticationToken
-            .unauthenticated(request.username(), request.password());
+            .unauthenticated(request.email(), request.password());
         RefreshToken refreshToken = RefreshToken.builder()
             .accessToken(jwtToken)
             .guid(refreshTokenGuid)
             .build();
 
         when(authenticationManager.authenticate(authToken)).thenReturn(authentication);
-        when(jwtService.generateToken(request.username())).thenReturn(jwtToken);
-        when(userRepository.findByUsername(request.username())).thenReturn(Mono.just(user));
+        when(jwtService.generateToken(request.email())).thenReturn(jwtToken);
+        when(userRepository.findByUsername(request.email())).thenReturn(Mono.just(user));
         when(refreshTokenRepository.save(any())).thenReturn(Mono.just(refreshToken));
 
         var result = authenticationService.authenticate(request);
@@ -116,7 +116,7 @@ public class AuthenticationServiceTest {
     @Test
     public void testAuthenticateReturnsInvalidPasswordBadCredentialsException() {
         var authToken = UsernamePasswordAuthenticationToken
-            .unauthenticated(request.username(), request.password());
+            .unauthenticated(request.email(), request.password());
 
         when(authenticationManager.authenticate(authToken)).thenThrow(new BadCredentialsException(BAD_CREDENTIALS_EXCEPTION));
 
@@ -132,10 +132,10 @@ public class AuthenticationServiceTest {
     @Test
     public void testAuthenticateReturnsBadCredentialsException() {
         var authToken = UsernamePasswordAuthenticationToken
-            .unauthenticated(request.username(), request.password());
+            .unauthenticated(request.email(), request.password());
 
         when(authenticationManager.authenticate(authToken)).thenReturn(authentication);
-        when(userRepository.findByUsername(request.username())).thenReturn(Mono.empty());
+        when(userRepository.findByUsername(request.email())).thenReturn(Mono.empty());
 
         var result = authenticationService.authenticate(request);
 
@@ -151,7 +151,7 @@ public class AuthenticationServiceTest {
     @Test
     public void testAuthenticateReturnsUnverifiedUserInvalidRequestException() {
         var authToken = UsernamePasswordAuthenticationToken
-            .unauthenticated(request.username(), request.password());
+            .unauthenticated(request.email(), request.password());
         var unverifiedUser = User.builder()
             .id(1L)
             .username("username")
@@ -162,7 +162,7 @@ public class AuthenticationServiceTest {
             .build();
 
         when(authenticationManager.authenticate(authToken)).thenReturn(authentication);
-        when(userRepository.findByUsername(request.username())).thenReturn(Mono.just(unverifiedUser));
+        when(userRepository.findByUsername(request.email())).thenReturn(Mono.just(unverifiedUser));
 
         var result = authenticationService.authenticate(request);
 
@@ -189,7 +189,7 @@ public class AuthenticationServiceTest {
 
         when(refreshTokenRepository.findByGuidAndAccessTokenAndExpirationDateAfter(any(), any(), any())).thenReturn(Mono.just(refreshToken));
         when(userRepository.findById(anyLong())).thenReturn(Mono.just(user));
-        when(jwtService.generateToken(request.username())).thenReturn(jwtToken);
+        when(jwtService.generateToken(request.email())).thenReturn(jwtToken);
         when(refreshTokenRepository.save(any())).thenReturn(Mono.just(refreshToken));
         
         var result = authenticationService.refreshToken(refreshTokenRequestDto);

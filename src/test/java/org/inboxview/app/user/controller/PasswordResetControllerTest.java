@@ -41,7 +41,7 @@ public class PasswordResetControllerTest extends BaseControllerTest {
     @BeforeEach
     public void setup() {
         request = PasswordResetRequestDto.builder()
-            .username("username")
+            .email("george@inboxview.com")
             .password("password")
             .passwordConfirmation("password")
             .token("token")
@@ -49,14 +49,14 @@ public class PasswordResetControllerTest extends BaseControllerTest {
         
         usernameRequest = """
             {
-                "username": "%s"
+                "email": "%s"
             }
-            """.formatted(request.username());
+            """.formatted(request.email());
     }
 
     @Test
     public void testEmailResetReturnsSuccess() throws Exception {
-        when(passwordService.emailResetLink(request.username())).thenReturn(Mono.empty());
+        when(passwordService.emailResetLink(request.email())).thenReturn(Mono.empty());
 
         MvcResult result = mockMvc.perform(
                 post("/api/password/email-reset")
@@ -75,7 +75,7 @@ public class PasswordResetControllerTest extends BaseControllerTest {
 
     @Test
     public void testEmailResetReturnsInternalServerError() throws Exception {
-        when(passwordService.emailResetLink(request.username())).thenThrow(new RuntimeException());
+        when(passwordService.emailResetLink(request.email())).thenThrow(new RuntimeException());
 
         mockMvc.perform(
                 post("/api/password/email-reset")

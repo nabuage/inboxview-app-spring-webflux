@@ -28,7 +28,7 @@ public class RegistrationService {
     private final UserMapper userMapper;
 
     public Mono<UserDto> register(RegistrationRequestDto request) {
-        return userRepository.existsByUsername(request.username())
+        return userRepository.existsByUsername(request.email())
             .flatMap(found -> {
                 if (found) {
                     throw new DuplicateException(USERNAME_EXIST);
@@ -37,7 +37,7 @@ public class RegistrationService {
                 return userRepository.save(
                         User.builder()
                         .guid(UUID.randomUUID().toString())
-                        .username(request.username())
+                        .username(request.email())
                         .email(request.email())
                         .password(passwordEncoder.encode(request.password()))
                         .firstName(request.firstName())

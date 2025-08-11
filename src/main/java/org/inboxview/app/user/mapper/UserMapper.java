@@ -10,7 +10,7 @@ public class UserMapper {
         User user = new User();
 
         user.setEmail(userDto.email());
-        user.setUsername(userDto.username());
+        user.setUsername(userDto.email());
 
         return user;
     }
@@ -18,7 +18,6 @@ public class UserMapper {
     public UserDto toDto(User user) {
         return new UserDto(
             user.getEmail(),
-            user.getUsername(),
             user.getFirstName(),
             user.getLastName(),
             user.getPhone(),

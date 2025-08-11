@@ -48,7 +48,6 @@ public class RegistrationServiceTest {
     @BeforeEach
     public void setup() {
         request = RegistrationRequestDto.builder()
-            .username("username")
             .password("password")
             .email("email@inboxview.com")
             .firstName("firstname")
@@ -57,7 +56,7 @@ public class RegistrationServiceTest {
 
         user = User.builder()
             .id(1L)
-            .username(request.username())
+            .username(request.email())
             .password(request.password())
             .email(request.email())
             .firstName(request.firstName())
@@ -66,7 +65,6 @@ public class RegistrationServiceTest {
 
         userDto = UserDto.builder()
             .email(user.getEmail())
-            .username(user.getUsername())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
             .phone(user.getPhone())

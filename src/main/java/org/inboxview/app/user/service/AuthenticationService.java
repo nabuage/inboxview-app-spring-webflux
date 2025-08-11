@@ -43,7 +43,7 @@ public class AuthenticationService {
         final AuthenticationRequestDto request
     ) {
         final var authToken = UsernamePasswordAuthenticationToken
-            .unauthenticated(request.username(), request.password());
+            .unauthenticated(request.email(), request.password());
 
         try {
             authenticationManager.authenticate(authToken);
@@ -52,12 +52,12 @@ public class AuthenticationService {
         }
 
         return userRepository
-            .findByUsername(request.username())
+            .findByUsername(request.email())
             .switchIfEmpty(Mono.error(new BadCredentialsException(INVALID_CREDENTIALS)))
             .filter(user -> user.getDateVerified() != null)
             .switchIfEmpty(Mono.error(new InvalidRequest(NOT_VERIFIED)))
             .flatMap(user -> {
-                var accessToken = jwtService.generateToken(request.username());
+                var accessToken = jwtService.generateToken(request.email());
 
                 RefreshToken refreshToken = RefreshToken.builder()
                     .userId(user.getId())

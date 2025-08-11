@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record UserDto(
     String email,
-    String username,
     String firstName,
     String lastName,
     String phone,

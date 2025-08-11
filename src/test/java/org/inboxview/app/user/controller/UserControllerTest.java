@@ -35,7 +35,6 @@ public class UserControllerTest extends BaseControllerTest {
     @BeforeEach
     public void setup() {
         user = UserDto.builder()
-            .username("username")
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
@@ -56,7 +55,6 @@ public class UserControllerTest extends BaseControllerTest {
         
         mockMvc.perform(asyncDispatch(result))
             .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(user.username()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(user.email()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(user.firstName()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(user.lastName()))

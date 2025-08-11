@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record RegistrationRequestDto(
-    String username,
     String email,
     String password,
     String firstName,

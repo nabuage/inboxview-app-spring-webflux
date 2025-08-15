@@ -21,6 +21,6 @@ public class UserController {
     public Mono<UserDto> getUser(
         final Authentication authentication
     ) {
-        return userService.getByUsername("test");
+        return userService.getByUsername(authentication.getName());
     }
 }

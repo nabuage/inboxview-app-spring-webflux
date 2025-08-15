@@ -71,7 +71,7 @@ public class AuthenticationService {
                     .save(refreshToken)
                     .flatMap(savedRefreshToken -> {
                         return Mono.just(
-                                new AuthenticationResponseDto(savedRefreshToken.getAccessToken(), savedRefreshToken.getGuid())
+                                new AuthenticationResponseDto(savedRefreshToken.getAccessToken(), savedRefreshToken.getGuid(), savedRefreshToken.getExpirationDate())
                             );
                     });
             });
@@ -103,7 +103,8 @@ public class AuthenticationService {
                                 return Mono.just(
                                         new AuthenticationResponseDto(
                                             updatedToken.getAccessToken(),
-                                            request.refreshToken()
+                                            request.refreshToken(),
+                                            updatedToken.getExpirationDate()
                                         )
                                     );
                             });

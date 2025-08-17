@@ -1,7 +1,6 @@
 package org.inboxview.app.user.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,7 +9,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import org.inboxview.app.user.dto.UserDto;
+import org.inboxview.app.user.repository.projection.UserMailboxTransaction;
 import org.inboxview.app.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
@@ -43,8 +47,8 @@ public class UserControllerTest extends BaseControllerTest {
 
     @Test
     @WithMockUser(username = USERNAME)
-    public void testGetByUsernameReturnsSuccess() throws Exception {
-        when(userService.getByUsername(any())).thenReturn(Mono.just(user));
+    public void testGetByUserReturnsSuccess() throws Exception {
+        when(userService.getUser()).thenReturn(Mono.just(user));
 
         MvcResult result = mockMvc.perform(
                 get("/api/user/me")            
@@ -61,16 +65,72 @@ public class UserControllerTest extends BaseControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value(user.phone()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isVerified").value(Boolean.FALSE));
         
-        verify(userService, times(1)).getByUsername(anyString());
+        verify(userService, times(1)).getUser();
     }
 
     @Test
-    public void testGetByUsernameReturnsUnauthorized() throws Exception {
+    public void testGetUserReturnsUnauthorized() throws Exception {
         mockMvc.perform(
             get("/api/user/me")            
         )
         .andExpect(status().isUnauthorized());
         
-        verify(userService, times(0)).getByUsername(USERNAME);
+        verify(userService, times(0)).getUser();
+    }
+
+    @Test
+    @WithMockUser(username = USERNAME)
+    public void testGetMailboxTransactionReturnsSuccess() throws Exception {
+        when(userService.getMailboxTransactionByMonth(anyInt())).thenReturn(mockUserMailboxTransactionList());
+
+        MvcResult result = mockMvc.perform(
+                get("/api/user/mailbox-transaction/" + LocalDate.now().getMonthValue())            
+            )
+            .andExpect(status().isOk())
+            .andExpect(request().asyncStarted())
+            .andReturn();
+        
+        mockMvc.perform(asyncDispatch(result))
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
+            .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].transactionId").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].merchantName").value("Merchant 1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].transactionDate").value(LocalDate.now().toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].amount").value("1.1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].transactionId").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].merchantName").value("Merchant 2"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].transactionDate").value(LocalDate.now().toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].amount").value("20.1"));
+        
+        verify(userService, times(1)).getMailboxTransactionByMonth(anyInt());
+    }
+
+    @Test
+    public void testGetMailboxTransactionReturnsUnauthorized() throws Exception {
+        mockMvc.perform(
+            get("/api/user/mailbox-transaction/" + LocalDate.now().getMonthValue())            
+        )
+        .andExpect(status().isUnauthorized());
+        
+        verify(userService, times(0)).getMailboxTransactionByMonth(anyInt());
+    }
+
+    private Flux<UserMailboxTransaction> mockUserMailboxTransactionList() {
+        return Flux.just(
+            UserMailboxTransaction.builder()
+                .transactionId(1L)
+                .merchantName("Merchant 1")
+                .transactionDate(LocalDate.now())
+                .amount(BigDecimal.valueOf(1.10))
+                .build(),
+            UserMailboxTransaction.builder()
+                .transactionId(2L)
+                .merchantName("Merchant 2")
+                .transactionDate(LocalDate.now())
+                .amount(BigDecimal.valueOf(20.10))
+                .build()
+        );
     }
 }

@@ -12,4 +12,6 @@ public interface RefreshTokenRepository extends ReactiveCrudRepository<RefreshTo
     Mono<RefreshToken> findByGuidAndAccessTokenAndExpirationDateAfter(String guid, String accessToken, OffsetDateTime expirationDate);
 
     Mono<Void> deleteByGuid(String guid);
+
+    Mono<Void> deleteByAccessToken(String accessToken);
 }

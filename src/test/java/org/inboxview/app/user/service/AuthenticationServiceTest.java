@@ -269,4 +269,19 @@ public class AuthenticationServiceTest {
 
         verify(refreshTokenRepository, times(1)).deleteByGuid(refreshToken);
     }
+
+    @Test
+    public void testRevokeRefreshTokenByAccessToken() {
+        String accessToken = UUID.randomUUID().toString();
+
+        when(refreshTokenRepository.deleteByAccessToken(anyString())).thenReturn(Mono.empty());
+
+        var result = authenticationService.revokeRefreshTokenByAccessToken(accessToken);
+
+        StepVerifier.create(result)
+            .expectNextCount(0)
+            .verifyComplete();
+
+        verify(refreshTokenRepository, times(1)).deleteByAccessToken(anyString());
+    }
 }

@@ -116,4 +116,9 @@ public class AuthenticationService {
     public Mono<Void> revokeRefreshToken(String refreshToken) {
         return refreshTokenRepository.deleteByGuid(refreshToken);
     }
+
+    @Transactional
+    public Mono<Void> revokeRefreshTokenByAccessToken(String accessToken) {
+        return refreshTokenRepository.deleteByAccessToken(accessToken);
+    }
 }

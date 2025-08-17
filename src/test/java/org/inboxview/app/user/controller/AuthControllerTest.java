@@ -142,12 +142,13 @@ public class AuthControllerTest extends BaseControllerTest {
 
     @Test
     public void testRevokeTokenReturnsSuccess() throws Exception {
-        when(authenticationService.revokeRefreshToken(anyString())).thenReturn(Mono.empty());
+        when(authenticationService.revokeRefreshTokenByAccessToken(anyString())).thenReturn(Mono.empty());
 
         MvcResult result = mockMvc.perform(
                 post("/api/auth/logout")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(OBJECT_MAPPER.writeValueAsString(refreshTokenRequest))
+                .header("Authorization", "token")
             )
             .andExpect(status().isOk())
             .andExpect(request().asyncStarted())
@@ -156,21 +157,22 @@ public class AuthControllerTest extends BaseControllerTest {
         mockMvc.perform(asyncDispatch(result))
             .andExpect(status().isNoContent());
 
-        verify(authenticationService, times(1)).revokeRefreshToken(anyString());
+        verify(authenticationService, times(1)).revokeRefreshTokenByAccessToken(anyString());
     }
 
     @Test
     public void testRevokeTokenReturnsInternalServerError() throws Exception {
-        when(authenticationService.revokeRefreshToken(anyString())).thenThrow(new RuntimeException());
+        when(authenticationService.revokeRefreshTokenByAccessToken(anyString())).thenThrow(new RuntimeException());
 
         mockMvc.perform(
                 post("/api/auth/logout")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(OBJECT_MAPPER.writeValueAsString(refreshTokenRequest))
+                .header("Authorization", "token")
             )
             .andExpect(status().isInternalServerError())
             .andReturn();
 
-        verify(authenticationService, times(1)).revokeRefreshToken(anyString());
+        verify(authenticationService, times(1)).revokeRefreshTokenByAccessToken(anyString());
     }
 }

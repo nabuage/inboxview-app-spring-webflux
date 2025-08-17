@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -37,9 +38,9 @@ public class AuthController {
 
     @PostMapping("/logout")
     public Mono<ResponseEntity<Void>> revokeToken(
-        @RequestBody RefreshTokenRequestDto request
+        @RequestHeader("Authorization") String token
     ) {
-        return authenticationService.revokeRefreshToken(request.refreshToken())
+        return authenticationService.revokeRefreshTokenByAccessToken(token.replace("Bearer ", ""))
             .then(Mono.just(ResponseEntity.noContent().<Void>build()))
             .onErrorResume(e -> {
                 return Mono.just(ResponseEntity.internalServerError().build());

@@ -106,9 +106,9 @@ public class UserServiceTest {
     public void testGetMailboxTransactionByMonthReturnsSuccess() {
         when(iAuthentication.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn(user.getEmail());
-        when(userRepository.getByUsernameAndMonth(anyString(), anyInt())).thenReturn(mockUserMailboxTransactionList());
+        when(userRepository.getByUsernameYearMonth(anyString(), anyInt(), anyInt())).thenReturn(mockUserMailboxTransactionList());
 
-        var result = userService.getMailboxTransactionByMonth(LocalDate.now().getMonthValue());
+        var result = userService.getMailboxTransactionByYearMonth(LocalDate.now().getYear(), LocalDate.now().getMonthValue());
 
         StepVerifier.create(result)
             .expectNextMatches(mailboxTransaction -> {
@@ -127,7 +127,7 @@ public class UserServiceTest {
             })
             .verifyComplete();
 
-        verify(userRepository, times(1)).getByUsernameAndMonth(anyString(), anyInt());
+        verify(userRepository, times(1)).getByUsernameYearMonth(anyString(), anyInt(), anyInt());
     }
 
     private Flux<UserMailboxTransaction> mockUserMailboxTransactionList() {

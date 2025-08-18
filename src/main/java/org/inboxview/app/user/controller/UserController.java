@@ -24,9 +24,12 @@ public class UserController {
         return userService.getUser();
     }
 
-    @GetMapping("/mailbox-transaction/{month}")
-    public Flux<UserMailboxTransaction> getMailboxTransaction(@PathVariable("month") Integer month) {
-        return userService.getMailboxTransactionByMonth(month);
+    @GetMapping("/mailbox-transaction/{year}/{month}")
+    public Flux<UserMailboxTransaction> getMailboxTransaction(
+        @PathVariable("month") Integer month,
+        @PathVariable("year") Integer year
+    ) {
+        return userService.getMailboxTransactionByYearMonth(year, month);
     }
     
 }

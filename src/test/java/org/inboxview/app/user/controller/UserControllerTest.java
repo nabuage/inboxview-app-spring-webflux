@@ -81,10 +81,10 @@ public class UserControllerTest extends BaseControllerTest {
     @Test
     @WithMockUser(username = USERNAME)
     public void testGetMailboxTransactionReturnsSuccess() throws Exception {
-        when(userService.getMailboxTransactionByMonth(anyInt())).thenReturn(mockUserMailboxTransactionList());
+        when(userService.getMailboxTransactionByYearMonth(anyInt(), anyInt())).thenReturn(mockUserMailboxTransactionList());
 
         MvcResult result = mockMvc.perform(
-                get("/api/user/mailbox-transaction/" + LocalDate.now().getMonthValue())            
+                get("/api/user/mailbox-transaction/%s/%s".formatted(LocalDate.now().getYear(), LocalDate.now().getMonthValue()))
             )
             .andExpect(status().isOk())
             .andExpect(request().asyncStarted())
@@ -104,17 +104,17 @@ public class UserControllerTest extends BaseControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.[1].transactionDate").value(LocalDate.now().toString()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.[1].amount").value("20.1"));
         
-        verify(userService, times(1)).getMailboxTransactionByMonth(anyInt());
+        verify(userService, times(1)).getMailboxTransactionByYearMonth(anyInt(), anyInt());
     }
 
     @Test
     public void testGetMailboxTransactionReturnsUnauthorized() throws Exception {
         mockMvc.perform(
-            get("/api/user/mailbox-transaction/" + LocalDate.now().getMonthValue())            
+            get("/api/user/mailbox-transaction/%s/%s".formatted(LocalDate.now().getYear(), LocalDate.now().getMonthValue()))
         )
         .andExpect(status().isUnauthorized());
         
-        verify(userService, times(0)).getMailboxTransactionByMonth(anyInt());
+        verify(userService, times(0)).getMailboxTransactionByYearMonth(anyInt(), anyInt());
     }
 
     private Flux<UserMailboxTransaction> mockUserMailboxTransactionList() {

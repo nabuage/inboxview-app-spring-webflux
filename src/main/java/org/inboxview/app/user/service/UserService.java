@@ -30,8 +30,8 @@ public class UserService {
             });
     }
 
-    public Flux<UserMailboxTransaction> getMailboxTransactionByMonth(Integer month) {
+    public Flux<UserMailboxTransaction> getMailboxTransactionByYearMonth(Integer year, Integer month) {
         return userRepository
-            .getByUsernameAndMonth(authentication.getAuthentication().getName(), month);
+            .getByUsernameYearMonth(authentication.getAuthentication().getName(), year, month);
     }
 }

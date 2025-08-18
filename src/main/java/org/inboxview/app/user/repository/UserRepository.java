@@ -36,9 +36,10 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
                 mailbox_transaction mt ON u.user_id = mt.user_id 
             WHERE
                 u.username = $1
-                AND EXTRACT(MONTH FROM mt.transaction_date) = $2            
+                AND EXTRACT(YEAR FROM mt.transaction_date) = $2
+                AND EXTRACT(MONTH FROM mt.transaction_date) = $3
         """
     )
-    Flux<UserMailboxTransaction> getByUsernameAndMonth(String username, Integer month);
+    Flux<UserMailboxTransaction> getByUsernameYearMonth(String username, Integer year, Integer month);
     
 }

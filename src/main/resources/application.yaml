@@ -35,7 +35,7 @@ app:
   from-email: george@inboxview.org
 
 jwt:
-  private-key: classpath:jwt/app.key
-  public-key: classpath:jwt/app.pub
+  private-key: ${IV_JWT_PRIVATE_KEY}
+  public-key: ${IV_JWT_PUBLIC_KEY}
   access-token-ttl: 15m
   refresh-token-ttl: 1440m

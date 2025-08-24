@@ -33,6 +33,7 @@ logging:
 app:
   url: ${IV_URL}
   from-email: george@inboxview.org
+  allowed-origins: ${IV_ALLOWED_ORIGINS}
 
 jwt:
   private-key: ${IV_JWT_PRIVATE_KEY}

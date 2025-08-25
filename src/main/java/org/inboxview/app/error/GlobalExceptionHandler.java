@@ -23,13 +23,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException exception) {
         HttpStatus status = getRuntimeExceptionHttpStatus(exception);
         String errorId = createErrorId();
+        String errorMessage = status.is5xxServerError()
+            ? ExceptionTextConstants.INTERNAL_ERROR
+            : exception.getMessage();System.out.println(status.is5xxServerError());
 
         log.error(errorId, exception);
 
         return ResponseEntity
             .status(status)
             .body(
-                new ErrorResponse(errorId, ExceptionTextConstants.INTERNAL_ERROR, status.value())
+                new ErrorResponse(errorId, errorMessage, status.value())
             );
     }
 
@@ -88,7 +91,9 @@ public class GlobalExceptionHandler {
     private HttpStatus getRuntimeExceptionHttpStatus(RuntimeException exception) {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (exception instanceof DataException) {
+        if (exception instanceof DataException ||
+            exception instanceof InvalidRequest
+        ) {
             httpStatus = HttpStatus.BAD_REQUEST;
         }
         else if (exception instanceof AuthorizationDeniedException) {

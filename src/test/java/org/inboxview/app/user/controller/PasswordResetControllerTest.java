@@ -116,7 +116,7 @@ public class PasswordResetControllerTest extends BaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(OBJECT_MAPPER.writeValueAsString(request))
             )
-            .andExpect(status().isInternalServerError())
+            .andExpect(status().is4xxClientError())
             .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(PASSWORD_NOT_EQUAL_ERROR));
 
         verify(passwordService, times(1)).reset(request);

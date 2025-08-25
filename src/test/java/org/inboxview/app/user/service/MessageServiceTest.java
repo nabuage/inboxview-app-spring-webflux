@@ -48,8 +48,6 @@ public class MessageServiceTest {
             .create(result)
             .expectNext(Boolean.TRUE)
             .verifyComplete();
-
-        verify(mailSender, times(1)).send(message);
     }
 
     

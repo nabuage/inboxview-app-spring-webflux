@@ -28,7 +28,7 @@ public class VerificationService {
     private final UserMapper userMapper;
     private final MessageSenderService messageSenderService;
     private static final String SUBJECT = "Email verification";
-    private static final String BODY = "Here's your link to verify your email: %sapi/registration/email/verify?id=%s&code=%s";
+    private static final String BODY = "Here's your link to verify your email: %sverify?id=%s&code=%s";
     private static final int MAX_ATTEMPT_COUNT = 10;
     private static final Long MAX_SECONDS_EXPIRATION = 86400L;
 

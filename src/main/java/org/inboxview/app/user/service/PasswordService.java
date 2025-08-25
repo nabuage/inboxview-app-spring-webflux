@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PasswordService {
     private static final String SUBJECT = "Password Reset";
-    private static final String BODY = "Here's your link to reset your password: %sapi/password/reset?id=%s&code=%s";
+    private static final String BODY = "Here's your link to reset your password: %password-reset?id=%s&code=%s";
     private static final String SUBJECT_VERIFY_PASSWORD_RESET = "Password Reset Confirmation";
     private static final String BODY_VERIFY_PASSWORD_RESET = "Your password was reset successfully.";
     private static final String PASSWORD_NOT_EQUAL_ERROR = "Password and Password Confirmation must be the same.";

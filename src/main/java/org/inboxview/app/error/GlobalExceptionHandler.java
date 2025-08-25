@@ -14,49 +14,64 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException exception) {
         HttpStatus status = getRuntimeExceptionHttpStatus(exception);
+        String errorId = createErrorId();
+
+        log.error(errorId, exception);
 
         return ResponseEntity
             .status(status)
             .body(
-                new ErrorResponse(createErrorId(), exception.getMessage(), status.value())
+                new ErrorResponse(errorId, ExceptionTextConstants.INTERNAL_ERROR, status.value())
             );
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleBadCredenialsxception(BadCredentialsException exception) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
+        String errorId = createErrorId();
+
+        log.error(errorId, exception);
 
         return ResponseEntity
             .status(status)
             .body(
-                new ErrorResponse(createErrorId(), exception.getMessage(), status.value())
+                new ErrorResponse(errorId, exception.getMessage(), status.value())
             );
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleDuplicationException(DuplicateException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        String errorId = createErrorId();
+
+        log.error(errorId, exception);
 
         return ResponseEntity
             .status(status)
             .body(
-                new ErrorResponse(createErrorId(), exception.getMessage(), status.value())
+                new ErrorResponse(errorId, exception.getMessage(), status.value())
             );
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException exception) {
         HttpStatus status = HttpStatus.NOT_FOUND;
+        String errorId = createErrorId();
+
+        log.error(errorId, exception);
 
         return ResponseEntity
             .status(status)
             .body(
-                new ErrorResponse(createErrorId(), exception.getMessage(), status.value())
+                new ErrorResponse(errorId, exception.getMessage(), status.value())
             );
     }
 

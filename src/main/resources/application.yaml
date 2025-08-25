@@ -28,7 +28,6 @@ logging:
         root: INFO
         org.springframework.data.repository: DEBUG
         org.springframework.r2dbc.core: DEBUG
-        io.r2dbc.postgresql.PARAM: DEBUG
 
 app:
   url: ${IV_URL}

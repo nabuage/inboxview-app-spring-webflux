@@ -1,6 +1,8 @@
 package org.inboxview.app.error;
 
 public class ExceptionTextConstants {
+    public static final String INTERNAL_ERROR = "Unexpected error. If this issue persists, please contact the site administration.";
+
     public static final String USER_NOT_FOUND = "User is not found.";
     public static final String USERNAME_EXIST = "Username already exists.";
     public static final String INVALID_VERIFICATION_CODE = "Invalid verification code.";

@@ -19,6 +19,7 @@ import org.inboxview.app.user.entity.UserVerification;
 import org.inboxview.app.user.mapper.UserMapper;
 import org.inboxview.app.user.repository.UserRepository;
 import org.inboxview.app.user.repository.UserVerificationRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -133,7 +134,7 @@ public class VerificationServiceTest {
             .userId(userId)
             .code(UUID.randomUUID().toString())
             .attemptCount(0L)
-            .dateAdded(OffsetDateTime.now())
+            .dateAdded(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
@@ -162,7 +163,7 @@ public class VerificationServiceTest {
             .userId(userId)
             .code(UUID.randomUUID().toString())
             .attemptCount(0L)
-            .dateAdded(OffsetDateTime.now())
+            .dateAdded(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.empty());
@@ -186,7 +187,7 @@ public class VerificationServiceTest {
             .userId(userId)
             .code(UUID.randomUUID().toString())
             .attemptCount(0L)
-            .dateAdded(OffsetDateTime.now())
+            .dateAdded(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
@@ -211,7 +212,7 @@ public class VerificationServiceTest {
             .userId(userId)
             .code(UUID.randomUUID().toString())
             .attemptCount(11L)
-            .dateAdded(OffsetDateTime.now())
+            .dateAdded(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
@@ -237,7 +238,7 @@ public class VerificationServiceTest {
             .userId(userId)
             .code(UUID.randomUUID().toString())
             .attemptCount(0L)
-            .dateAdded(OffsetDateTime.now().plusSeconds(86400L + 1000L))
+            .dateAdded(DateUtil.getCurrentDateTime().plusSeconds(86400L + 1000L))
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
@@ -305,7 +306,7 @@ public class VerificationServiceTest {
             .email("george@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));

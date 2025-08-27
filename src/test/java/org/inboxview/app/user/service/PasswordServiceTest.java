@@ -13,6 +13,7 @@ import org.inboxview.app.error.InvalidRequest;
 import org.inboxview.app.user.dto.PasswordResetRequestDto;
 import org.inboxview.app.user.entity.User;
 import org.inboxview.app.user.repository.UserRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ public class PasswordServiceTest {
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .build();
     }
 
@@ -104,9 +105,9 @@ public class PasswordServiceTest {
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .passwordResetCount(0L)
-            .passwordResetDateRequested(OffsetDateTime.now())
+            .passwordResetDateRequested(DateUtil.getCurrentDateTime())
             .build();
         var encodedPassword = "encoded-password";
 
@@ -142,9 +143,9 @@ public class PasswordServiceTest {
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .passwordResetCount(11L)
-            .passwordResetDateRequested(OffsetDateTime.now())
+            .passwordResetDateRequested(DateUtil.getCurrentDateTime())
             .build();
 
         when(userRepository.findByGuidAndPasswordResetToken(anyString(), anyString())).thenReturn(Mono.just(userPasswordReset));
@@ -176,9 +177,9 @@ public class PasswordServiceTest {
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .passwordResetCount(9L)
-            .passwordResetDateRequested(OffsetDateTime.now().minus(Duration.ofMinutes(11)))
+            .passwordResetDateRequested(DateUtil.getCurrentDateTime().minus(Duration.ofMinutes(11)))
             .build();
 
         when(userRepository.findByGuidAndPasswordResetToken(anyString(), anyString())).thenReturn(Mono.just(userPasswordReset));

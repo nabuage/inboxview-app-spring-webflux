@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.inboxview.app.error.InvalidRequest;
 import org.inboxview.app.user.dto.PasswordResetRequestDto;
 import org.inboxview.app.user.repository.UserRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class PasswordService {
         return userRepository.findByUsername(username)
             .flatMap(user -> {
                 user.setPasswordResetToken(UUID.randomUUID().toString());
-                user.setPasswordResetDateRequested(OffsetDateTime.now());
+                user.setPasswordResetDateRequested(DateUtil.getCurrentDateTime());
                 user.setPasswordResetCount(0L);
 
                 return userRepository
@@ -65,10 +66,10 @@ public class PasswordService {
                 if (user.getPasswordResetCount() != null &&
                     user.getPasswordResetCount() <= MAX_COUNT &&
                     user.getPasswordResetDateRequested() != null &&
-                    user.getPasswordResetDateRequested().plus(Duration.ofMinutes(MAX_MINNUTES)).isAfter(OffsetDateTime.now())
+                    user.getPasswordResetDateRequested().plus(Duration.ofMinutes(MAX_MINNUTES)).isAfter(DateUtil.getCurrentDateTime())
                 ) {
                     user.setPassword(passwordEncoder.encode(request.password()));
-                    user.setPasswordDateReset(OffsetDateTime.now());
+                    user.setPasswordDateReset(DateUtil.getCurrentDateTime());
 
                     return userRepository
                         .save(user)

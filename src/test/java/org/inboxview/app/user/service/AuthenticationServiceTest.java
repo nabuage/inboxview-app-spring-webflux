@@ -20,6 +20,7 @@ import org.inboxview.app.user.entity.RefreshToken;
 import org.inboxview.app.user.entity.User;
 import org.inboxview.app.user.repository.RefreshTokenRepository;
 import org.inboxview.app.user.repository.UserRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,7 +75,7 @@ public class AuthenticationServiceTest {
             .email("email@inboxview.com")
             .firstName("firstname")
             .lastName("lastname")
-            .dateVerified(OffsetDateTime.now())
+            .dateVerified(DateUtil.getCurrentDateTime())
             .build();
 
         request = AuthenticationRequestDto.builder()
@@ -179,8 +180,8 @@ public class AuthenticationServiceTest {
             .userId(user.getId())
             .guid(UUID.randomUUID().toString())
             .accessToken(jwtToken)
-            .dateAdded(OffsetDateTime.now())
-            .expirationDate(OffsetDateTime.now().plus(Duration.ofDays(1)))
+            .dateAdded(DateUtil.getCurrentDateTime())
+            .expirationDate(DateUtil.getCurrentDateTime().plus(Duration.ofDays(1)))
             .build();
         var refreshTokenRequestDto = RefreshTokenRequestDto.builder()
             .accessToken(jwtToken)
@@ -211,8 +212,8 @@ public class AuthenticationServiceTest {
             .userId(user.getId())
             .guid(UUID.randomUUID().toString())
             .accessToken(jwtToken)
-            .dateAdded(OffsetDateTime.now())
-            .expirationDate(OffsetDateTime.now().plus(Duration.ofDays(1)))
+            .dateAdded(DateUtil.getCurrentDateTime())
+            .expirationDate(DateUtil.getCurrentDateTime().plus(Duration.ofDays(1)))
             .build();
         var refreshTokenRequestDto = RefreshTokenRequestDto.builder()
             .accessToken(jwtToken)
@@ -235,8 +236,8 @@ public class AuthenticationServiceTest {
         RefreshToken refreshToken = RefreshToken.builder()
             .userId(user.getId())
             .guid(UUID.randomUUID().toString())
-            .dateAdded(OffsetDateTime.now())
-            .expirationDate(OffsetDateTime.now().plus(Duration.ofDays(1)))
+            .dateAdded(DateUtil.getCurrentDateTime())
+            .expirationDate(DateUtil.getCurrentDateTime().plus(Duration.ofDays(1)))
             .build();
         var refreshTokenRequestDto = RefreshTokenRequestDto.builder()
             .accessToken(jwtToken)

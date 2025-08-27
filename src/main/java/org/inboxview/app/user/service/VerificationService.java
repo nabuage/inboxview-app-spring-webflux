@@ -12,6 +12,7 @@ import org.inboxview.app.user.entity.UserVerification;
 import org.inboxview.app.user.mapper.UserMapper;
 import org.inboxview.app.user.repository.UserRepository;
 import org.inboxview.app.user.repository.UserVerificationRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,7 @@ public class VerificationService {
         verification.setUserId(userId);
         verification.setCode(UUID.randomUUID().toString());
         verification.setAttemptCount(0L);
-        verification.setDateAdded(OffsetDateTime.now());
+        verification.setDateAdded(DateUtil.getCurrentDateTime());
 
         return userVerificationRepository
             .save(verification)
@@ -83,7 +84,7 @@ public class VerificationService {
                     .findByUserId(user.getId())
                     .switchIfEmpty(Mono.error(new NotFoundException(INVALID_VERIFICATION_CODE)))
                     .flatMap(verification -> {
-                        OffsetDateTime dateVerified = OffsetDateTime.now();
+                        OffsetDateTime dateVerified = DateUtil.getCurrentDateTime();
                         Long secondsBetweenDateAddedAndNow = ChronoUnit.SECONDS.between(dateVerified, verification.getDateAdded());
 
                         if (verification.getDateVerified() == null &&
@@ -122,7 +123,7 @@ public class VerificationService {
             .switchIfEmpty(Mono.error(new DuplicateException(USER_ALREADY_VERIFIED)))
             .flatMap(user -> {
                 return userVerificationRepository
-                    .setDateDeletedByUserId(user.getId(), OffsetDateTime.now())
+                    .setDateDeletedByUserId(user.getId(), DateUtil.getCurrentDateTime())
                     .then(sendEmailVerification(user))
                     .then();
             });

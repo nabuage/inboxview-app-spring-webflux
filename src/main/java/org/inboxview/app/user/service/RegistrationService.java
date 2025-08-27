@@ -9,6 +9,7 @@ import org.inboxview.app.user.dto.UserDto;
 import org.inboxview.app.user.entity.User;
 import org.inboxview.app.user.mapper.UserMapper;
 import org.inboxview.app.user.repository.UserRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class RegistrationService {
                         .password(passwordEncoder.encode(request.password()))
                         .firstName(request.firstName())
                         .lastName(request.lastName())
-                        .dateAdded(OffsetDateTime.now())
+                        .dateAdded(DateUtil.getCurrentDateTime())
                         .build()
                     )
                     .flatMap(registeredUser -> {

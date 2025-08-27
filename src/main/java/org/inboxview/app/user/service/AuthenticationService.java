@@ -13,6 +13,7 @@ import org.inboxview.app.user.dto.RefreshTokenRequestDto;
 import org.inboxview.app.user.entity.RefreshToken;
 import org.inboxview.app.user.repository.RefreshTokenRepository;
 import org.inboxview.app.user.repository.UserRepository;
+import org.inboxview.app.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,8 +64,8 @@ public class AuthenticationService {
                     .userId(user.getId())
                     .guid(UUID.randomUUID().toString())
                     .accessToken(accessToken)
-                    .dateAdded(OffsetDateTime.now())
-                    .expirationDate(OffsetDateTime.now().plus(ttl))
+                    .dateAdded(DateUtil.getCurrentDateTime())
+                    .expirationDate(DateUtil.getCurrentDateTime().plus(ttl))
                     .build();
                 
                 return refreshTokenRepository
@@ -84,7 +85,7 @@ public class AuthenticationService {
             .findByGuidAndAccessTokenAndExpirationDateAfter(
                 request.refreshToken(),
                 request.accessToken(),
-                OffsetDateTime.now()
+                DateUtil.getCurrentDateTime()
             )
             .switchIfEmpty(Mono.error(new NotFoundException(INVALID_VERIFICATION_CODE)))
             .flatMap(rToken -> {
@@ -95,7 +96,7 @@ public class AuthenticationService {
                         var accessToken = jwtService.generateToken(user.getUsername());
 
                         rToken.setAccessToken(accessToken);
-                        rToken.setExpirationDate(OffsetDateTime.now().plus(ttl));
+                        rToken.setExpirationDate(DateUtil.getCurrentDateTime().plus(ttl));
 
                         return refreshTokenRepository
                             .save(rToken)

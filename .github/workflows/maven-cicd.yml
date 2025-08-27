@@ -24,7 +24,6 @@ jobs:
       IV_MAIL_USERNAME: ${{ secrets.IV_MAIL_USERNAME }}
       IV_MAIL_PASSWORD: ${{ secrets.IV_MAIL_PASSWORD }}
       IV_ALLOWED_ORIGINS: ${{ secrets.IV_ALLOWED_ORIGINS }}
-      TZ: America/New_York
 
     steps:
     - uses: actions/checkout@v4

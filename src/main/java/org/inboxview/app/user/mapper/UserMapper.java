@@ -16,12 +16,13 @@ public class UserMapper {
     }
 
     public UserDto toDto(User user) {
-        return new UserDto(
-            user.getEmail(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getPhone(),
-            user.getDateVerified() != null
-        );
+        return UserDto.builder()
+            .id(user.getGuid())
+            .email(user.getEmail())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .phone(user.getPhone())
+            .isVerified(user.getDateVerified() != null)
+            .build();
     }
 }

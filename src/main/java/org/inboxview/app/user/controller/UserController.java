@@ -12,6 +12,10 @@ import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -31,5 +35,12 @@ public class UserController {
     ) {
         return userService.getMailboxTransactionByYearMonth(year, month);
     }
-    
+
+    @PutMapping("/{id}")
+    public Mono<UserDto> update(
+        @PathVariable String id,
+        @RequestBody final UserDto userDto
+    ) {
+        return userService.updateUser(id, userDto);
+    }    
 }

@@ -9,19 +9,24 @@ public class UserMapper {
     public User toEntity(UserDto userDto) {
         User user = new User();
 
+        user.setGuid(userDto.id());
         user.setEmail(userDto.email());
         user.setUsername(userDto.email());
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setPhone(user.getPhone());
 
         return user;
     }
 
     public UserDto toDto(User user) {
-        return new UserDto(
-            user.getEmail(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getPhone(),
-            user.getDateVerified() != null
-        );
+        return UserDto.builder()
+            .id(user.getGuid())
+            .email(user.getEmail())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .phone(user.getPhone())
+            .isVerified(user.getDateVerified() != null)
+            .build();
     }
 }

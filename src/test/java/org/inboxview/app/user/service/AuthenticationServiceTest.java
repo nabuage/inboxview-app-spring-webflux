@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.inboxview.app.config.JwtService;

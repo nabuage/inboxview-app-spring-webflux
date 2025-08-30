@@ -1,8 +1,6 @@
 package org.inboxview.app.config;
 
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
@@ -25,12 +23,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Configuration
-@Setter
-@Getter
 public class JwtConfig {
     private final String ALGORITHM = "RSA";
     private RSAPrivateKey privateKey;

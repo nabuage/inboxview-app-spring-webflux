@@ -1,6 +1,7 @@
 package org.inboxview.app.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -9,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
+
 import org.inboxview.app.config.IAuthentication;
 import org.inboxview.app.error.NotFoundException;
 import org.inboxview.app.user.dto.UserDto;
@@ -49,9 +52,11 @@ public class UserServiceTest {
     UserDto userDto;
 
     @BeforeEach
-    public void setup() {        
+    public void setup() {  
+        var guid = UUID.randomUUID().toString();      
         user = User.builder()
             .id(1L)
+            .guid(guid)
             .username("email@inboxview.com")
             .password("password")
             .email("email@inboxview.com")
@@ -60,6 +65,7 @@ public class UserServiceTest {
             .build();
 
         userDto = UserDto.builder()
+            .id(guid)
             .email(user.getEmail())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
@@ -145,5 +151,42 @@ public class UserServiceTest {
                 .amount(BigDecimal.valueOf(20.10))
                 .build()
         );
+    }
+
+    @Test
+    public void testUpdateUserReturnsSuccess() {
+        when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
+        when(userRepository.save(any())).thenReturn(Mono.just(user));
+        when(userMapper.toDto(any())).thenReturn(userDto);
+
+        var result = userService.updateUser(user.getGuid(), userDto);
+
+        StepVerifier.create(result)
+            .expectNextMatches(dto -> {
+                assertThat(dto.email()).isEqualTo(userDto.email());
+                assertThat(dto.firstName()).isEqualTo(userDto.firstName());
+                assertThat(dto.lastName()).isEqualTo(userDto.lastName());
+                assertThat(dto.phone()).isEqualTo(userDto.phone());
+                assertThat(dto.isVerified()).isEqualTo(Boolean.FALSE);
+                return Boolean.TRUE;
+            })
+            .verifyComplete();
+        
+        verify(userRepository, times(1)).findByGuid(anyString());
+        verify(userRepository, times(1)).save(any());
+        verify(userMapper, times(1)).toDto(any());
+    }
+
+    @Test
+    public void testUpdateUserReturnsNotFoundException() {
+        when(userRepository.findByGuid(anyString())).thenReturn(Mono.empty());
+
+        var result = userService.updateUser(user.getGuid(), userDto);
+
+        StepVerifier.create(result)
+            .expectError(NotFoundException.class)
+            .verify();
+
+        verify(userRepository, times(1)).findByGuid(anyString());
     }
 }

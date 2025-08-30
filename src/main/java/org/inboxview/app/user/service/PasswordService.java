@@ -1,7 +1,6 @@
 package org.inboxview.app.user.service;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.inboxview.app.error.InvalidRequest;

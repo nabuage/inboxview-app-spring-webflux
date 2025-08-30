@@ -1,5 +1,6 @@
 package org.inboxview.app.user.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -84,6 +85,11 @@ public class RegistrationServiceTest {
 
         StepVerifier.create(result)
             .expectNextMatches(dto -> {
+                assertThat(dto.email()).isEqualTo(userDto.email());
+                assertThat(dto.firstName()).isEqualTo(userDto.firstName());
+                assertThat(dto.lastName()).isEqualTo(userDto.lastName());
+                assertThat(dto.phone()).isEqualTo(userDto.phone());
+                assertThat(dto.isVerified()).isEqualTo(Boolean.FALSE);
                 return Boolean.TRUE;
             })
             .verifyComplete();

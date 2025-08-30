@@ -4,6 +4,7 @@ import org.inboxview.app.user.dto.UserDto;
 import org.inboxview.app.user.mapper.UserMapper;
 import org.inboxview.app.user.repository.UserRepository;
 import org.inboxview.app.user.repository.projection.UserMailboxTransaction;
+import org.inboxview.app.utils.DateUtil;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -33,5 +34,25 @@ public class UserService {
     public Flux<UserMailboxTransaction> getMailboxTransactionByYearMonth(Integer year, Integer month) {
         return userRepository
             .getByUsernameYearMonth(authentication.getAuthentication().getName(), year, month);
+    }
+
+    public Mono<UserDto> updateUser(
+        final String guid,
+        final UserDto userDto
+    ) {        
+        return userRepository
+            .findByGuid(guid)
+            .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
+            .flatMap(user -> {
+                user.setFirstName(userDto.firstName());
+                user.setLastName(userDto.lastName());
+                user.setPhone(userDto.phone());
+                user.setDateUpdated(DateUtil.getCurrentDateTime());
+
+                return userRepository.save(user)
+                    .map(userSaved -> {
+                        return userMapper.toDto(user);
+                    });
+            });
     }
 }

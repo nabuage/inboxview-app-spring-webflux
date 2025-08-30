@@ -1,6 +1,5 @@
 package org.inboxview.app.user.service;
 
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.inboxview.app.error.DuplicateException;

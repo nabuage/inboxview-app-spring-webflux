@@ -2,11 +2,11 @@ package org.inboxview.app.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -47,6 +48,7 @@ public class UserControllerTest extends BaseControllerTest {
     private UserDto user;
 
     private String jsonRequest;
+    private JwtRequestPostProcessor jwtProcessor;
 
     @BeforeEach
     public void setup() {
@@ -66,6 +68,13 @@ public class UserControllerTest extends BaseControllerTest {
                 user.firstName(),
                 user.lastName()
             );
+        jwtProcessor = SecurityMockMvcRequestPostProcessors
+                    .jwt()
+                    .jwt(jwt -> jwt
+                        .subject("subject")
+                        .issuer("issuer")
+                        .expiresAt(Instant.now().plus(Duration.ofMinutes(1)))
+                    );
     }
 
     @Test
@@ -159,11 +168,10 @@ public class UserControllerTest extends BaseControllerTest {
 
     @Test
     public void testUpdateUserReturnsSuccess() throws Exception {
-        when(userService.updateUser(anyString(), any())).thenReturn(Mono.just(user));
-
+        when(userService.updateUser(any())).thenReturn(Mono.just(user));
         
         MvcResult result = mockMvc.perform(
-                put("/api/user/%s".formatted(user.id()))
+                put("/api/user/")
                 .with(
                     SecurityMockMvcRequestPostProcessors
                     .jwt()
@@ -187,25 +195,16 @@ public class UserControllerTest extends BaseControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value(user.phone()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isVerified").value(Boolean.FALSE));
 
-        verify(userService, times(1)).updateUser(anyString(), any());
+        verify(userService, times(1)).updateUser(any());
     }
 
     @Test
     public void testUpdateUserReturnsNotFoundException() throws Exception {
-        when(userService.updateUser(anyString(), any())).thenReturn(Mono.error(new NotFoundException(ExceptionTextConstants.USER_NOT_FOUND)));
-
+        when(userService.updateUser(any())).thenReturn(Mono.error(new NotFoundException(ExceptionTextConstants.USER_NOT_FOUND)));
         
         MvcResult result = mockMvc.perform(
-                put("/api/user/%s".formatted(user.id()))
-                .with(
-                    SecurityMockMvcRequestPostProcessors
-                    .jwt()
-                    .jwt(jwt -> jwt
-                        .subject("subject")
-                        .issuer("issuer")
-                        .expiresAt(Instant.now().plus(Duration.ofMinutes(1)))
-                    )
-                )
+                put("/api/user/")
+                .with(jwtProcessor)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRequest)
             )
@@ -216,16 +215,45 @@ public class UserControllerTest extends BaseControllerTest {
             .andExpect(status().is4xxClientError())
             .andExpect(MockMvcResultMatchers.jsonPath("$.error").value(ExceptionTextConstants.USER_NOT_FOUND));
 
-        verify(userService, times(1)).updateUser(anyString(), any());
+        verify(userService, times(1)).updateUser(any());
     }
 
     @Test
     public void testUpdateUserReturnsUnauthorized() throws Exception {
         mockMvc.perform(
-                put("/api/user/%s".formatted(user.id()))
+                put("/api/user/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRequest)
             )
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testDeleteReturnsSuccess() throws Exception {
+        when(userService.deleteUser()).thenReturn(Mono.empty());
+
+        MvcResult result = mockMvc.perform(
+                delete("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(jwtProcessor)
+            )
+            .andExpect(status().isOk())
+            .andExpect(request().asyncStarted())
+            .andReturn();
+
+        mockMvc.perform(asyncDispatch(result))
+            .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).deleteUser();
+    }
+
+    @Test
+    public void testDeleteReturnsUnauthorized() throws Exception {
+        mockMvc.perform(
+                delete("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnauthorized())
+            .andReturn();
     }
 }

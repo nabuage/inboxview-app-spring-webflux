@@ -1,5 +1,7 @@
 package org.inboxview.app.user.repository;
 
+import java.time.OffsetDateTime;
+
 import org.inboxview.app.user.entity.User;
 import org.inboxview.app.user.repository.projection.UserMailboxTransaction;
 import org.springframework.data.r2dbc.repository.Query;
@@ -33,7 +35,7 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
             FROM 
                 "user" u
             INNER JOIN
-                mailbox_transaction mt ON u.user_id = mt.user_id 
+                mailbox_transaction mt ON u.user_id = mt.user_id AND u.date_deleted IS NULL
             WHERE
                 u.username = $1
                 AND EXTRACT(YEAR FROM mt.transaction_date) = $2
@@ -42,4 +44,6 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
     )
     Flux<UserMailboxTransaction> getByUsernameYearMonth(String username, Integer year, Integer month);
     
+    @Query("UPDATE \"user\" SET date_deleted = $2 WHERE user_id = $1")
+    public Mono<Void> deleteById(Long id, OffsetDateTime dateTime);
 }

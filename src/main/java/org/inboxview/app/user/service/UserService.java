@@ -18,11 +18,11 @@ import org.inboxview.app.error.NotFoundException;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository; 
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final IAuthentication authentication;
 
-    public Mono<UserDto> getUser() {        
+    public Mono<UserDto> getUser() {
         return userRepository
             .findByUsername(authentication.getAuthentication().getName())
             .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
@@ -37,11 +37,10 @@ public class UserService {
     }
 
     public Mono<UserDto> updateUser(
-        final String guid,
         final UserDto userDto
     ) {        
         return userRepository
-            .findByGuid(guid)
+            .findByUsername(authentication.getAuthentication().getName())
             .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
             .flatMap(user -> {
                 user.setFirstName(userDto.firstName());
@@ -54,5 +53,14 @@ public class UserService {
                         return userMapper.toDto(user);
                     });
             });
+    }
+
+    public Mono<Void> deleteUser() {        
+        return userRepository
+            .findByUsername(authentication.getAuthentication().getName())
+            .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
+            .flatMap(user -> 
+                userRepository.deleteById(user.getId())
+            );
     }
 }

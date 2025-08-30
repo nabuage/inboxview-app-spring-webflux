@@ -3,6 +3,7 @@ package org.inboxview.app.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -155,11 +156,13 @@ public class UserServiceTest {
 
     @Test
     public void testUpdateUserReturnsSuccess() {
-        when(userRepository.findByGuid(anyString())).thenReturn(Mono.just(user));
+        when(iAuthentication.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByUsername(anyString())).thenReturn(Mono.just(user));
         when(userRepository.save(any())).thenReturn(Mono.just(user));
         when(userMapper.toDto(any())).thenReturn(userDto);
 
-        var result = userService.updateUser(user.getGuid(), userDto);
+        var result = userService.updateUser(userDto);
 
         StepVerifier.create(result)
             .expectNextMatches(dto -> {
@@ -172,21 +175,55 @@ public class UserServiceTest {
             })
             .verifyComplete();
         
-        verify(userRepository, times(1)).findByGuid(anyString());
+        verify(userRepository, times(1)).findByUsername(anyString());
         verify(userRepository, times(1)).save(any());
         verify(userMapper, times(1)).toDto(any());
     }
 
     @Test
     public void testUpdateUserReturnsNotFoundException() {
-        when(userRepository.findByGuid(anyString())).thenReturn(Mono.empty());
+        when(iAuthentication.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByUsername(anyString())).thenReturn(Mono.empty());
 
-        var result = userService.updateUser(user.getGuid(), userDto);
+        var result = userService.updateUser(userDto);
 
         StepVerifier.create(result)
             .expectError(NotFoundException.class)
             .verify();
 
-        verify(userRepository, times(1)).findByGuid(anyString());
+        verify(userRepository, times(1)).findByUsername(anyString());
+    }
+
+    @Test
+    public void testDeleteUserReturnsSuccess() {
+        when(iAuthentication.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByUsername(anyString())).thenReturn(Mono.just(user));
+        when(userRepository.deleteById(anyLong())).thenReturn(Mono.empty());
+
+        var result = userService.deleteUser();
+
+        StepVerifier.create(result)
+            .expectNextCount(0)
+            .verifyComplete();
+        
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    public void testDeleteUserReturnsNotFoundException() {
+        when(iAuthentication.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByUsername(anyString())).thenReturn(Mono.empty());
+
+        var result = userService.deleteUser();
+
+        StepVerifier.create(result)
+            .expectError(NotFoundException.class)
+            .verify();
+
+        verify(userRepository, times(1)).findByUsername(anyString());
     }
 }
